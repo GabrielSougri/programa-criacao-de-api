@@ -7,8 +7,8 @@ dotenv.config()
 
 const server = express()
 
-server.use(rota)
-server.use(cors())
 server.use(express.urlencoded({extended: true}))
+server.use(cors())
+server.use(rota)
 
 server.listen(process.env.PORT)

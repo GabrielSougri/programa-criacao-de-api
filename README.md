@@ -15,9 +15,13 @@
   PORT=80 
 
   DATABASE=pessoas
+  
   USER=root
+  
   PASSWORD=123
+  
   HOST:localhost
+  
   DIALECT:postgres
 
   SECRET_KEY=4545

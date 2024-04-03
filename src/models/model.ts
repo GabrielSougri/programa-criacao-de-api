@@ -25,4 +25,30 @@ export default class model{
             allowNull: false
         }
     }
+
+    protected static attrData(){
+        return {
+            allowNull: false,
+            typeString(){
+                return {
+                    type: DataTypes.STRING
+                }
+            },
+            typeInteger(){
+                return {
+                    type: DataTypes.INTEGER
+                }
+            },
+            typeFloat(){
+                return {
+                    type: DataTypes.FLOAT
+                }
+            },
+            typeBoolean(){
+                return {
+                    type: DataTypes.BOOLEAN
+                }
+            }
+        }
+    }
 }

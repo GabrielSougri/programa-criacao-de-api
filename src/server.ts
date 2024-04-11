@@ -14,4 +14,6 @@ server.get("/", (req: Request, res: Response) => {
     res.json("Hello World!!")
 })
 
-server.listen(process.env.PORT) 
+server.listen(process.env.PORT)
+
+export default server

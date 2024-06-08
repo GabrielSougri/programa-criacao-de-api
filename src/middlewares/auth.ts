@@ -1,48 +1,57 @@
-import JWT from "jsonwebtoken"
-import { NextFunction, Request, Response } from "express"
-import { login } from "../types/loginType"
-import dotenv from "dotenv"
-import { ModelCtor } from "sequelize"
+import JWT from "jsonwebtoken";
+import { NextFunction, Request, Response } from "express";
+import { ModelCtor } from "sequelize";
 
-dotenv.config()
+type login = {
+    email: string,
+    senha: string
+}
 
-export default class Auth{
-    private static liberate = false
+export default class Auth {
+    static generateToken(res: Response, req: Request) {
+        const {email, senha} = req.body
 
-    protected static generateToken(login: login){
-        const token = JWT.sign({email: login.email, senha: login.senha}, process.env.SECRET_KEY as string)
+        const Email: string = email
+        const Senha: string = senha        
+
+        const token = JWT.sign(
+            { 
+                email: Email, 
+                senha: Senha 
+            }, process.env.SECRET_KEY as string
+        );
         return token
     }
 
-    protected static async authenticAndGetOne(req: Request, model: ModelCtor<any>){
-        if(req.headers.authorization){
-            const [authType, token] = req.headers.authorization
+    static async authenticAndGetOne(req: Request, res: Response, model: ModelCtor<any>) {
+        if(req.headers.authorization) {
+            const [authType, token] = req.headers.authorization.split(' ');
 
-            if(authType === "Bearer"){
-                const decoded: login = JWT.verify(token, process.env.SECRET_KEY as string) as login
+            if(authType === "Bearer" && token) {
+                const decoded: login = JWT.verify(token, process.env.SECRET_KEY as string) as login;
+                const user = await model.findOne({ where: { email: decoded.email} });
 
-                const user = await model.findOne({where: {email: decoded.email, senha: decoded.senha}})
-                this.liberate = true
-
-                if(this.liberate){
+                if(user) {
                     return user
                 }
-            }   
+            }
         }
     }
 
-    public static routeProtected(req: Request, res: Response, next: NextFunction){
-        if(req.headers.authorization){
-            const [authType, token] = req.headers.authorization
+    static routeProtected(req: Request, res: Response, next: NextFunction) {
+        let liberado = false;
 
-            if(authType === "Bearer"){
-                JWT.verify(token, process.env.SECRET_KEY as string) as login
-                this.liberate = true
+        if (req.headers.authorization) {
+            const [authType, token] = req.headers.authorization;
 
-                if(this.liberate){
+            if (authType === "Bearer") {
+                JWT.verify(token, process.env.SECRET_KEY as string) as login;
+                liberado = true;
+
+                if (liberado) {
                     next()
                 }
-            }   
+            }
         }
     }
 }

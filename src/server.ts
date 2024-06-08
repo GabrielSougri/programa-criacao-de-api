@@ -1,19 +1,15 @@
 import express from "express"
 import cors from "cors"
 import dotenv from "dotenv"
-import { Request, Response } from "express"
+import connectionNOSQL from "./database/conectionNOSQL"
 
 dotenv.config()
 
 const server = express()
 
+/*connectionNOSQL.connNosql()*/ 
+
 server.use(express.urlencoded({extended: true}))
 server.use(cors())
 
-server.get("/", (req: Request, res: Response) => {
-    res.json("Hello World!!")
-})
-
-/*server.listen(process.env.PORT)*/
-
-export default server
+server.listen(process.env.PORT, () => console.log("servidor iniciado"))  
